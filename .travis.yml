@@ -1,0 +1,39 @@
+services:
+  - docker
+
+# Pre-testing installs
+install:
+  - echo "nothing needs to be installed"
+
+# Scripts to be run such as tests
+before_script:
+  - echo "no tests"
+
+script:
+  # - docker --version # print the version for logging
+  # - docker build -t simple-node .
+  # - docker tag simple-node YOUR_DOCKER_HUB/simple-node:latest
+
+  - docker-compose -f docker-compose-build.yaml build --parallel
+
+  - docker tag udagram-api-user demola07/udagram-api-user:v1
+  - docker tag udagram-api-feed demola07/udagram-api-feed:v1
+  - docker tag udacity-frontend demola07/udacity-frontend:v1
+  - docker tag reverseproxy demola07/reverseproxy:v1
+
+# Tasks to perform after the process is successful. Formatting the Docker username and password as below enables you to programmatically log in without having the password exposed in logs.
+after_success:
+  # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  # - docker push YOUR_DOCKER_HUB/simple-node
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push demola07/udagram-api-user:v1
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push demola07/udagram-api-feed:v1
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push demola07/udacity-frontend:v1
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push demola07/reverseproxy:v1
