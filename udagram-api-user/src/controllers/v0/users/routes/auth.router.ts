@@ -8,7 +8,6 @@ import * as jwt from 'jsonwebtoken';
 import { NextFunction } from 'connect';
 
 import * as EmailValidator from 'email-validator';
-import { config } from 'bluebird';
 
 const router: Router = Router();
 
@@ -69,6 +68,8 @@ router.post('/login', async (req: Request, res: Response) => {
     return res.status(401).send({ auth: false, message: 'User was not found..' });
   }
 
+  console.log('user exists', user);
+
   const authValid = await comparePasswords(password, user.passwordHash);
 
   if (!authValid) {
@@ -103,6 +104,7 @@ router.post('/', async (req: Request, res: Response) => {
     email: email,
     passwordHash: generatedHash,
   });
+  console.log('new user created', newUser);
 
   const savedUser = await newUser.save();
 
